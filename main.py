@@ -10,7 +10,7 @@ items = [
 
 
 # Seeing all items
-@app.get("/")
+@app.get("/items")
 def get_all_items():
     return items
 
