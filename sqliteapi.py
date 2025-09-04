@@ -1,5 +1,5 @@
 import sqlite3
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 
 app = FastAPI()
 
@@ -64,7 +64,10 @@ def get_item(name: str):
 
 # add new item
 @app.post("/items/create")
-def add_item(name: str, rating: int):
+async def add_item(req: Request) -> dict:
+    data = await req.json()
+    name = data.get("name")
+    rating = data.get("rating")
     try:
         cursor.execute(
             "insert into items(name, rating) values(?,?)",
@@ -80,8 +83,12 @@ def add_item(name: str, rating: int):
 
 
 # update item
-@app.put("/items/update/{item_id}")
-def update_item(item_id: int, name: str, rating: int):
+@app.put("/items/update")
+async def update_item(req: Request) -> dict:
+    data = await req.json()
+    item_id = data.get("id")
+    name = data.get("name")
+    rating = data.get("rating")
     try:
         cursor.execute(
             "update items set name=?, rating=? where id=?",
